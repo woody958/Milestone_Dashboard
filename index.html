@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>글로벌 중개 마케팅 강의 론칭 퍼널 대시보드</title>
+    <title>글로벌 중개 마케팅 강의 론칭 퍼널 대시보드 V2</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Tailwind Custom Configuration -->
@@ -16,6 +16,7 @@
                             50: '#f0f3ff',
                             100: '#e0e7ff',
                             200: '#c7d2fe',
+                            500: '#6366f1',
                             600: '#4f46e5',
                             700: '#4338ca',
                             800: '#3730a3',
@@ -32,7 +33,6 @@
     </script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Tailwind Custom Styles -->
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -56,7 +56,7 @@
     </style>
 </head>
 <body class="text-slate-100 min-h-screen pb-12">
-    <!-- Navigation / Header -->
+    <!-- Header -->
     <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50 px-6 py-4">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-3">
@@ -64,8 +64,8 @@
                     <i data-lucide="globe-2" class="w-6 h-6"></i>
                 </div>
                 <div>
-                    <h1 class="text-lg md:text-xl font-bold tracking-tight text-white flex items-center gap-2">
-                        글로벌 중개 마케팅 강의 론칭 대시보드
+                    <h1 class="text-lg md:text-xl font-bold tracking-tight text-white">
+                        글로벌 중개 마케팅 강의 론칭 대시보드 <span class="text-brand-400 text-xs px-2 py-0.5 bg-brand-900/50 rounded-full border border-brand-700/30">V2</span>
                     </h1>
                     <p class="text-xs text-slate-400">외국인 관광객 ↔ 국내 광고주 매칭 강의 제작 프로젝트</p>
                 </div>
@@ -73,7 +73,7 @@
             <div class="flex items-center gap-3">
                 <button onclick="saveAllData()" class="flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-lg shadow-lg shadow-brand-900/30 transition duration-150">
                     <i data-lucide="save" class="w-4 h-4"></i>
-                    전체 자동저장 완료
+                    수동 백업 저장
                 </button>
                 <button onclick="resetData()" class="flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-red-950/40 hover:text-red-400 text-slate-300 text-sm font-medium rounded-lg border border-slate-700 transition duration-150" title="데이터 초기화">
                     <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
@@ -87,14 +87,15 @@
         <!-- Funnel Steps Navigation -->
         <div class="bg-slate-900/50 border border-slate-800 rounded-xl p-2 mb-8 shadow-2xl">
             <div class="grid grid-cols-2 md:grid-cols-5 gap-1.5" id="funnel-tabs">
-                <!-- Tabs dynamically rendered here by JS -->
+                <!-- Dynamic tabs -->
             </div>
         </div>
 
-        <!-- Dashboard Content Grid -->
+        <!-- Dashboard Grid Layout -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Left Side: 6 Core Sections -->
+            <!-- Left & Middle: Core Step Details (2 Columns) -->
             <div class="lg:col-span-2 space-y-6">
+                <!-- Active Step Info Badge -->
                 <div class="flex items-center justify-between">
                     <h2 class="text-xl font-bold text-white flex items-center gap-2">
                         <span id="current-step-badge" class="px-2.5 py-1 text-xs font-semibold bg-brand-600/20 text-brand-200 border border-brand-500/30 rounded">1단계</span>
@@ -102,86 +103,113 @@
                     </h2>
                     <span class="text-xs text-slate-400 flex items-center gap-1.5 bg-slate-900 px-2.5 py-1 rounded-full border border-slate-800">
                         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        수정 시 자동 저장됩니다
+                        수정 즉시 실시간 브라우저 자동 저장됩니다
                     </span>
                 </div>
 
-                <!-- 6 Core Cards Grid -->
+                <!-- KPI Box (Only visible for Step 2, 3, 4) -->
+                <div id="kpi-visualization-card" class="bg-slate-900 border border-slate-800 rounded-xl p-6 hidden transition-all duration-200">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="font-semibold text-white flex items-center gap-2 text-base">
+                                <i data-lucide="line-chart" class="w-5 h-5 text-rose-500"></i>
+                                ① KPI 및 목표치 설정 및 시각화
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-1">목표치와 현재 달성치를 입력하면 시각화 차트가 즉시 연동됩니다.</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1.5 font-medium">KPI 지표명</label>
+                            <input type="text" id="kpi-metric-name" oninput="updateKPI('metricName', this.value)" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-sm p-2 rounded-lg focus:border-brand-500 focus:outline-none" placeholder="예: 무료 강의 신청자 수">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1.5 font-medium">목표 수치 (숫자만)</label>
+                            <input type="number" id="kpi-target-val" oninput="updateKPI('target', this.value)" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-sm p-2 rounded-lg focus:border-brand-500 focus:outline-none" placeholder="예: 1000">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1.5 font-medium">현재 실적 (숫자만)</label>
+                            <input type="number" id="kpi-current-val" oninput="updateKPI('current', this.value)" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-sm p-2 rounded-lg focus:border-brand-500 focus:outline-none" placeholder="예: 450">
+                        </div>
+                    </div>
+                    <!-- Visual Chart / Bar -->
+                    <div class="bg-slate-950 border border-slate-800/80 rounded-lg p-4">
+                        <div class="flex justify-between text-xs text-slate-400 mb-2">
+                            <span id="visual-metric-display" class="font-semibold text-slate-300">지표명 미정</span>
+                            <span class="font-bold text-brand-400" id="visual-pct-display">0% 달성</span>
+                        </div>
+                        <div class="w-full bg-slate-800 rounded-full h-3 mb-2 overflow-hidden">
+                            <div id="visual-progress-bar" class="bg-gradient-to-r from-rose-500 to-brand-500 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                        <div class="flex justify-between text-[11px] text-slate-500">
+                            <span>현재: <strong id="visual-current-display" class="text-slate-300">0</strong></span>
+                            <span>목표: <strong id="visual-target-display" class="text-slate-300">0</strong></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step Missions & Sub-tasks & Goals Area -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h3 class="font-semibold text-white flex items-center gap-2 text-base">
+                                <i data-lucide="check-square" class="w-5 h-5 text-emerald-500"></i>
+                                ② 단계별 미션 사항, 목적 및 세부 업무 구성
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-1">이 퍼널에서 추진할 미션, 수행 목적, 세부 업무 내용을 상세히 수립합니다.</p>
+                        </div>
+                        <button onclick="openNewMissionModal()" class="flex items-center gap-1.5 px-3 py-1.5 bg-brand-600/20 text-brand-300 hover:bg-brand-600 hover:text-white border border-brand-500/30 rounded-lg text-xs font-semibold transition">
+                            <i data-lucide="plus" class="w-4 h-4"></i> 미션 등록
+                        </button>
+                    </div>
+
+                    <!-- Mission Cards Stack -->
+                    <div id="m-stack" class="space-y-4">
+                        <!-- Dynamic Missions injected here -->
+                    </div>
+                </div>
+
+                <!-- Currently in Progress Tracker Checkbox -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h3 class="font-semibold text-white flex items-center gap-2 text-base">
+                                <i data-lucide="activity" class="w-5 h-5 text-sky-400"></i>
+                                ③ 현재 진행중인 사항 및 실시간 체크 (완료 알림)
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-1">현재 활발하게 실행 중인 미션 단위를 체크박스 리스트로 시각화하여 진행도를 모니터링합니다.</p>
+                        </div>
+                    </div>
+
+                    <!-- Progress Check List -->
+                    <div id="progress-checkbox-list" class="space-y-3">
+                        <!-- Checkboxes will list current missions -->
+                    </div>
+                </div>
+
+                <!-- Short-term & Long-term Improvements Text Areas -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- 1. KPI 및 목표치 -->
-                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition duration-150">
-                        <div class="flex justify-between items-center mb-3">
-                            <h3 class="font-semibold text-white flex items-center gap-2 text-sm md:text-base">
-                                <i data-lucide="target" class="w-4.5 h-4.5 text-rose-500"></i>
-                                ① KPI 및 목표치
-                            </h3>
-                        </div>
-                        <textarea oninput="updateField('kpi', this.value)" id="field-kpi" class="w-full h-32 bg-slate-950 text-slate-300 text-sm p-3 rounded-lg border border-slate-800 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none resize-none" placeholder="예: 무료 수강 신청자 1,000명 확보, 단톡방 인원 500명 달성 등"></textarea>
+                    <!-- Short Term -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+                        <h3 class="font-semibold text-white flex items-center gap-2 text-sm md:text-base mb-3">
+                            <i data-lucide="zap" class="w-4.5 h-4.5 text-amber-400"></i>
+                            ④ 단기적 개선이 필요한 사항
+                        </h3>
+                        <textarea oninput="updateField('shortTerm', this.value)" id="field-shortTerm" class="w-full h-32 bg-slate-950 text-slate-300 text-sm p-3 rounded-lg border border-slate-800 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none resize-none" placeholder="회의 중 도출된 단기 실행 개선안을 입력하세요."></textarea>
                     </div>
 
-                    <!-- 2. 단계별 미션 사항 (Key Missions with Checklist) -->
-                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition duration-150">
-                        <div class="flex justify-between items-center mb-3">
-                            <h3 class="font-semibold text-white flex items-center gap-2 text-sm md:text-base">
-                                <i data-lucide="check-square" class="w-4.5 h-4.5 text-emerald-500"></i>
-                                ② 단계별 미션 사항
-                            </h3>
-                            <button onclick="addNewMission()" class="text-xs text-brand-400 hover:text-brand-300 flex items-center gap-0.5">
-                                <i data-lucide="plus" class="w-3.5 h-3.5"></i> 추가
-                            </button>
-                        </div>
-                        <div id="mission-list-container" class="space-y-2.5 max-h-32 overflow-y-auto pr-1">
-                            <!-- Missions will be injected here -->
-                        </div>
-                    </div>
-
-                    <!-- 3. 현재 진행중인 사항 -->
-                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition duration-150">
-                        <div class="flex justify-between items-center mb-3">
-                            <h3 class="font-semibold text-white flex items-center gap-2 text-sm md:text-base">
-                                <i data-lucide="play" class="w-4.5 h-4.5 text-sky-500"></i>
-                                ③ 현재 진행중인 사항
-                            </h3>
-                        </div>
-                        <textarea oninput="updateField('progress', this.value)" id="field-progress" class="w-full h-32 bg-slate-950 text-slate-300 text-sm p-3 rounded-lg border border-slate-800 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none resize-none" placeholder="예: 기획안 1차 회의 완료, 피그마 레이아웃 검토 중..."></textarea>
-                    </div>
-
-                    <!-- 4. 이전 강의 대비 수정한 내용 -->
-                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition duration-150">
-                        <div class="flex justify-between items-center mb-3">
-                            <h3 class="font-semibold text-white flex items-center gap-2 text-sm md:text-base">
-                                <i data-lucide="git-compare" class="w-4.5 h-4.5 text-indigo-400"></i>
-                                ④ 이전 강의 대비 수정한 내용
-                            </h3>
-                        </div>
-                        <textarea oninput="updateField('changes', this.value)" id="field-changes" class="w-full h-32 bg-slate-950 text-slate-300 text-sm p-3 rounded-lg border border-slate-800 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none resize-none" placeholder="예: 광고주 매칭 비즈니스 모델 단순화, 론칭 준비 간소화 등"></textarea>
-                    </div>
-
-                    <!-- 5. 단기적 개선이 필요한 사항 -->
-                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition duration-150">
-                        <div class="flex justify-between items-center mb-3">
-                            <h3 class="font-semibold text-white flex items-center gap-2 text-sm md:text-base">
-                                <i data-lucide="zap" class="w-4.5 h-4.5 text-amber-500"></i>
-                                ⑤ 단기적 개선이 필요한 사항
-                            </h3>
-                        </div>
-                        <textarea oninput="updateField('shortTerm', this.value)" id="field-shortTerm" class="w-full h-32 bg-slate-950 text-slate-300 text-sm p-3 rounded-lg border border-slate-800 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none resize-none" placeholder="예: 타겟 국가(대만/일본) 광고 채널 우선 세팅..."></textarea>
-                    </div>
-
-                    <!-- 6. 장기적 개선이 필요한 사항 -->
-                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition duration-150">
-                        <div class="flex justify-between items-center mb-3">
-                            <h3 class="font-semibold text-white flex items-center gap-2 text-sm md:text-base">
-                                <i data-lucide="trending-up" class="w-4.5 h-4.5 text-purple-400"></i>
-                                ⑥ 장기적 개선이 필요한 사항
-                            </h3>
-                        </div>
-                        <textarea oninput="updateField('longTerm', this.value)" id="field-longTerm" class="w-full h-32 bg-slate-950 text-slate-300 text-sm p-3 rounded-lg border border-slate-800 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none resize-none" placeholder="예: 자동 광고주 연결 플랫폼 설계, LMS 자동 이수 가이드라인 마련 등"></textarea>
+                    <!-- Long Term -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+                        <h3 class="font-semibold text-white flex items-center gap-2 text-sm md:text-base mb-3">
+                            <i data-lucide="trending-up" class="w-4.5 h-4.5 text-purple-400"></i>
+                            ⑤ 장기적 개선이 필요한 사항
+                        </h3>
+                        <textarea oninput="updateField('longTerm', this.value)" id="field-longTerm" class="w-full h-32 bg-slate-950 text-slate-300 text-sm p-3 rounded-lg border border-slate-800 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none resize-none" placeholder="구조적 문제 혹은 장기적인 시스템 개선 플랜을 입력하세요."></textarea>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Side: Meeting Notes & Sidebar Actions -->
+            <!-- Right Side: Navigation Instructions & Backup -->
             <div class="space-y-6">
                 <!-- Project Goal Board -->
                 <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
@@ -191,7 +219,18 @@
                     </h3>
                     <div class="p-4 bg-brand-950/30 border border-brand-800/30 rounded-lg text-sm text-slate-300 leading-relaxed">
                         <strong class="text-brand-300 block mb-1">외국인 관광객 ↔ 국내 광고주 연결 마케팅</strong>
-                        한국을 방문하는 외국인 인플루언서 및 유입 루트를 활용해 국내 소상공인과 중소기업의 마케팅을 대행하는 초격차 마케팅 실전 대행·중개 강의 패키지 제작
+                        한국을 방문하는 외국인 관광객 및 유입 채널 인프라를 활용하여, 국내 중소기업 및 소상공인의 해외 홍보 마케팅을 실전 대행·중개하는 정예 가이드라인 강의 론칭 프로젝트
+                    </div>
+                </div>
+
+                <!-- Custom Alert notification box -->
+                <div id="toast-notif-box" class="hidden bg-emerald-950/80 border border-emerald-500/30 rounded-xl p-4 flex items-start gap-3 transition-all duration-300 animate-pulse">
+                    <div class="p-1 bg-emerald-500 rounded text-slate-950 mt-0.5">
+                        <i data-lucide="bell" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold text-emerald-300 block">완료 알림</span>
+                        <p id="toast-notif-msg" class="text-xs text-slate-300 mt-0.5">새로운 세부 미션이 완료 처리되었습니다!</p>
                     </div>
                 </div>
 
@@ -209,30 +248,30 @@
                     
                     <div class="space-y-3">
                         <div class="flex gap-1.5">
-                            <input type="text" id="note-input" onkeypress="handleNoteKeypress(event)" class="flex-1 bg-slate-950 text-slate-300 text-sm px-3 py-2 rounded-lg border border-slate-800 focus:border-brand-500 focus:outline-none" placeholder="오늘 회의 피드백 입력 후 Enter...">
+                            <input type="text" id="note-input" onkeypress="handleNoteKeypress(event)" class="flex-1 bg-slate-950 text-slate-300 text-sm px-3 py-2 rounded-lg border border-slate-800 focus:border-brand-500 focus:outline-none" placeholder="피드백 입력 후 Enter...">
                             <button onclick="addQuickNote()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-sm transition">등록</button>
                         </div>
                         <ul id="quick-notes-list" class="space-y-2 max-h-56 overflow-y-auto pr-1">
-                            <!-- Notes go here -->
+                            <!-- Notes -->
                         </ul>
                     </div>
                 </div>
 
-                <!-- Export Data Box -->
+                <!-- Backup & Restoration -->
                 <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
                     <h3 class="font-semibold text-white flex items-center gap-2 mb-2 text-sm">
                         <i data-lucide="download" class="w-4 h-4 text-slate-400"></i>
-                        데이터 내보내기 / 불러오기
+                        JSON 파일 백업
                     </h3>
-                    <p class="text-xs text-slate-400 mb-4">현재까지 기록한 모든 회의 정보를 파일로 보관하거나 다른 브라우저로 가져올 수 있습니다.</p>
+                    <p class="text-xs text-slate-400 mb-4">대시보드 전 단계의 상세 기획 데이터, 수치, 메모 내역을 온전히 로컬 PC 파일로 저장하거나 로드할 수 있습니다.</p>
                     <div class="grid grid-cols-2 gap-2">
                         <button onclick="exportData()" class="px-3 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 transition flex items-center justify-center gap-1.5">
                             <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
-                            JSON 다운로드
+                            백업 다운로드
                         </button>
                         <label class="px-3 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 transition flex items-center justify-center gap-1.5 cursor-pointer text-center">
                             <i data-lucide="file-up" class="w-3.5 h-3.5"></i>
-                            JSON 불러오기
+                            파일 불러오기
                             <input type="file" id="import-file" onchange="importData(event)" class="hidden" accept=".json">
                         </label>
                     </div>
@@ -241,8 +280,41 @@
         </div>
     </main>
 
+    <!-- Interactive Mission Entry / Edit Modal -->
+    <div id="mission-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden px-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-xl shadow-2xl p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modal-title" class="text-base font-bold text-white flex items-center gap-2">
+                    <i data-lucide="file-edit" class="w-5 h-5 text-brand-400"></i>
+                    단계별 신규 미션 수립
+                </h3>
+                <button onclick="closeMissionModal()" class="text-slate-400 hover:text-white transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <input type="hidden" id="modal-edit-index">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1.5 font-medium">단계별 미션명</label>
+                    <input type="text" id="modal-mission-text" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-sm p-2.5 rounded-lg focus:border-brand-500 focus:outline-none" placeholder="예: 타겟 국가별 소상공인 마케팅 니즈 분석">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1.5 font-medium">미션 수행 목적</label>
+                    <input type="text" id="modal-mission-goal" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-sm p-2.5 rounded-lg focus:border-brand-500 focus:outline-none" placeholder="예: 실제 연결 성사 시 수수료 모델 검증 및 교육 자료화 목적">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1.5 font-medium">진행할 세부 업무 내용 (컴마로 구분 또는 단일 작성)</label>
+                    <textarea id="modal-mission-subtasks" class="w-full h-24 bg-slate-950 border border-slate-800 text-slate-200 text-sm p-2.5 rounded-lg focus:border-brand-500 focus:outline-none resize-none" placeholder="예: 타겟 소상공인 인터뷰 5건 진행, 국가별 매칭 수수료율 조사"></textarea>
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 mt-6">
+                <button onclick="closeMissionModal()" class="px-4 py-2 bg-slate-800 text-slate-300 hover:bg-slate-700 rounded-lg text-sm transition">취소</button>
+                <button onclick="submitMissionModal()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-semibold transition">저장 완료</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Data Structures & Steps configuration
         const funnelSteps = [
             { id: 'step1', name: '강의 기획 단계' },
             { id: 'step2', name: '무료 강의 인원 모집' },
@@ -251,64 +323,100 @@
             { id: 'step5', name: '유료 강의 운영' }
         ];
 
-        // Default empty state placeholders
-        const defaultStepData = {
-            kpi: "",
-            progress: "",
-            changes: "",
-            shortTerm: "",
-            longTerm: "",
-            missions: []
-        };
-
-        // Core App State
         let currentStepId = 'step1';
         let funnelData = {};
         let quickNotes = [];
 
-        // Sample initial structure with placeholders
-        const initialMissions = {
-            step1: [
-                { text: "타겟 소상공인(광고주)의 가장 가려운 핵심 소구점 도출하기", completed: false },
-                { text: "외국인 인플루언서 섭외 루트 5개 확보하기", completed: false }
-            ],
-            step2: [
-                { text: "유입 광고 소재(이미지/비디오) 기획 및 마케팅 카피 확정", completed: false },
-                { text: "구글 폼 또는 신청용 랜딩페이지 제작", completed: false }
-            ],
-            step3: [
-                { text: "입장 대기 안내 문자 및 자동 알림 발송 세팅", completed: false },
-                { text: "단톡방 내 신뢰 구축용 사전 혜택 배포 일정 짜기", completed: false }
-            ],
-            step4: [
-                { text: "무료 특강 진행용 슬라이드 및 마이크 사운드 최종 테스트", completed: false },
-                { text: "특강 말미 유료 업셀링 패키지 한정 혜택 스크립트 리허설", completed: false }
-            ],
-            step5: [
-                { text: "1기 정식 등록 수강생 수강 권한 일괄 부여", completed: false },
-                { text: "주차별 정기 미션 트래킹용 공유 시트 배포", completed: false }
-            ]
+        // Sample initial default dataset for structured learning
+        const initialDataSet = {
+            step1: {
+                kpi: { metricName: "", target: "", current: "" },
+                shortTerm: "",
+                longTerm: "",
+                missions: [
+                    {
+                        text: "타겟 소상공인 마케팅 니즈 분석",
+                        goal: "국내 소상공인들의 외국인 관광객 유치 극대화 니즈 분석",
+                        subtasks: "설문지 10개 배포, 핵심 가려운 점 리스트업",
+                        completed: false
+                    },
+                    {
+                        text: "해외 매칭 인플루언서 섭외 루트 설계",
+                        goal: "한국 방문 예정인 외국인 인플루언서 풀 선섭외 모델 확립",
+                        subtasks: "인스타그램 DM 섭외 가이드북 제작, 메일 양식 확정",
+                        completed: false
+                    }
+                ]
+            },
+            step2: {
+                kpi: { metricName: "무료 특강 사전 신청자 수", target: "1000", current: "0" },
+                shortTerm: "",
+                longTerm: "",
+                missions: [
+                    {
+                        text: "홍보 소재 기획 및 제작",
+                        goal: "인스타/페이스북 기반 전환 광고 유도",
+                        subtasks: "카드뉴스 이미지 3개, 숏폼 콘셉트 비디오 1개 편집",
+                        completed: false
+                    }
+                ]
+            },
+            step3: {
+                kpi: { metricName: "카카오 단톡방 참여 인원", target: "500", current: "0" },
+                shortTerm: "",
+                longTerm: "",
+                missions: [
+                    {
+                        text: "입장 대기 웰컴 시나리오 세팅",
+                        goal: "단톡방 유입 수강생 이탈 방지 및 친밀도 유지",
+                        subtasks: "무료 PDF 가이드북 증정 자동화, 고정공지 등록",
+                        completed: false
+                    }
+                ]
+            },
+            step4: {
+                kpi: { metricName: "실시간 특강 줌 참석률", target: "300", current: "0" },
+                shortTerm: "",
+                longTerm: "",
+                missions: [
+                    {
+                        text: "특강 리허설 및 장비 테스트",
+                        goal: "라이브 송출 오류 최소화 및 오디오 체크",
+                        subtasks: "줌 프로 요금제 세팅, 피티 슬라이드 애니메이션 확인",
+                        completed: false
+                    }
+                ]
+            },
+            step5: {
+                kpi: { metricName: "", target: "", current: "" }, // Step 5 does not require KPI according to specifications
+                shortTerm: "",
+                longTerm: "",
+                missions: [
+                    {
+                        text: "유료 수강생 밀착 홈워크 피드백",
+                        goal: "수강생 성과 창출률 극대화 및 바이럴 확보",
+                        subtasks: "1주차 미션 완료 시트 개설, 수시 코칭 답변",
+                        completed: false
+                    }
+                ]
+            }
         };
 
-        // Initialize App
         function initApp() {
-            // Load from LocalStorage if exists
-            const savedFunnelData = localStorage.getItem('funnelData');
-            const savedQuickNotes = localStorage.getItem('quickNotes');
-            const savedCurrentStep = localStorage.getItem('currentStepId');
+            const savedFunnelData = localStorage.getItem('funnelData_v2');
+            const savedQuickNotes = localStorage.getItem('quickNotes_v2');
+            const savedCurrentStep = localStorage.getItem('currentStepId_v2');
 
             if (savedFunnelData) {
                 funnelData = JSON.parse(savedFunnelData);
             } else {
-                // Generate blank template
+                // Initialize default structured data
                 funnelSteps.forEach(step => {
-                    funnelData[step.id] = {
-                        kpi: "",
-                        progress: "",
-                        changes: "",
+                    funnelData[step.id] = initialDataSet[step.id] || {
+                        kpi: { metricName: "", target: "", current: "" },
                         shortTerm: "",
                         longTerm: "",
-                        missions: initialMissions[step.id] ? [...initialMissions[step.id]] : []
+                        missions: []
                     };
                 });
             }
@@ -316,9 +424,7 @@
             if (savedQuickNotes) {
                 quickNotes = JSON.parse(savedQuickNotes);
             } else {
-                quickNotes = [
-                    "회의 시 의사결정이 지연될 경우 해당 단계 미션의 담당자를 우선 확정하기"
-                ];
+                quickNotes = ["중개 마케팅의 본질은 실제 매칭 매끄러움에 있음 - 교육 수강생 성과 확보 필수"];
             }
 
             if (savedCurrentStep) {
@@ -331,7 +437,7 @@
             lucide.createIcons();
         }
 
-        // Render upper step navigation
+        // Tabs render logic with progress metrics
         function renderTabs() {
             const tabsContainer = document.getElementById('funnel-tabs');
             tabsContainer.innerHTML = '';
@@ -342,7 +448,6 @@
                     ? 'bg-brand-600 border-brand-500 text-white font-bold shadow-lg shadow-brand-900/20' 
                     : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-900/80';
 
-                // Calculate progress of missions for step
                 const stepMissions = funnelData[step.id]?.missions || [];
                 const completedCount = stepMissions.filter(m => m.completed).length;
                 const progressPct = stepMissions.length > 0 ? Math.round((completedCount / stepMissions.length) * 100) : 0;
@@ -355,7 +460,7 @@
                             <div class="${isActive ? 'bg-white' : 'bg-brand-500'} h-1 rounded-full" style="width: ${progressPct}%"></div>
                         </div>
                         <div class="flex justify-between items-center mt-1 text-[9px] opacity-80">
-                            <span>진행도</span>
+                            <span>완료율</span>
                             <span>${progressPct}%</span>
                         </div>
                     </button>
@@ -364,112 +469,278 @@
             });
         }
 
-        // Switch active step
         function switchStep(stepId) {
             currentStepId = stepId;
-            localStorage.setItem('currentStepId', stepId);
+            localStorage.setItem('currentStepId_v2', stepId);
             renderTabs();
             renderStepContent();
             lucide.createIcons();
         }
 
-        // Render active step details to 6 card components
+        // Main content render based on active step selection
         function renderStepContent() {
             const currentStep = funnelSteps.find(s => s.id === currentStepId);
-            const stepData = funnelData[currentStepId] || { ...defaultStepData };
+            const stepData = funnelData[currentStepId] || { kpi: { metricName: "", target: "", current: "" }, missions: [], shortTerm: "", longTerm: "" };
 
-            // Update Titles
             document.getElementById('current-step-badge').textContent = `${funnelSteps.indexOf(currentStep) + 1}단계`;
             document.getElementById('current-step-title').textContent = currentStep.name;
 
             // Fill Text Areas
-            document.getElementById('field-kpi').value = stepData.kpi || "";
-            document.getElementById('field-progress').value = stepData.progress || "";
-            document.getElementById('field-changes').value = stepData.changes || "";
             document.getElementById('field-shortTerm').value = stepData.shortTerm || "";
             document.getElementById('field-longTerm').value = stepData.longTerm || "";
 
-            // Render Checklist
-            renderMissionChecklist();
+            // KPI Visibility & calculations for Steps 2, 3, 4
+            const kpiCard = document.getElementById('kpi-visualization-card');
+            if (currentStepId === 'step2' || currentStepId === 'step3' || currentStepId === 'step4') {
+                kpiCard.classList.remove('hidden');
+                
+                const kpiObj = stepData.kpi || { metricName: "", target: "", current: "" };
+                document.getElementById('kpi-metric-name').value = kpiObj.metricName || "";
+                document.getElementById('kpi-target-val').value = kpiObj.target || "";
+                document.getElementById('kpi-current-val').value = kpiObj.current || "";
+                
+                updateKPIVisuals(kpiObj);
+            } else {
+                kpiCard.classList.add('hidden');
+            }
+
+            renderMissions();
+            renderProgressTrackerList();
         }
 
-        // Handle typing updates in real-time
-        function updateField(fieldName, value) {
-            if (!funnelData[currentStepId]) {
-                funnelData[currentStepId] = { ...defaultStepData };
+        // Live visual update logic for KPI Progress Card
+        function updateKPIVisuals(kpiObj) {
+            const nameDisp = document.getElementById('visual-metric-display');
+            const pctDisp = document.getElementById('visual-pct-display');
+            const bar = document.getElementById('visual-progress-bar');
+            const currDisp = document.getElementById('visual-current-display');
+            const targDisp = document.getElementById('visual-target-display');
+
+            const name = kpiObj.metricName || "KPI 지표 정보가 존재하지 않습니다";
+            const target = parseFloat(kpiObj.target) || 0;
+            const current = parseFloat(kpiObj.current) || 0;
+
+            let pct = 0;
+            if (target > 0) {
+                pct = Math.round((current / target) * 100);
             }
-            funnelData[currentStepId][fieldName] = value;
+
+            nameDisp.textContent = name;
+            pctDisp.textContent = `${pct}% 달성`;
+            bar.style.width = `${Math.min(pct, 100)}%`;
+            currDisp.textContent = current.toLocaleString();
+            targDisp.textContent = target.toLocaleString();
+        }
+
+        function updateKPI(field, val) {
+            if (!funnelData[currentStepId].kpi) {
+                funnelData[currentStepId].kpi = { metricName: "", target: "", current: "" };
+            }
+            funnelData[currentStepId].kpi[field] = val;
+            saveAllDataSilently();
+            updateKPIVisuals(funnelData[currentStepId].kpi);
+        }
+
+        function updateField(field, val) {
+            funnelData[currentStepId][field] = val;
             saveAllDataSilently();
         }
 
-        // Render checklist items
-        function renderMissionChecklist() {
-            const container = document.getElementById('mission-list-container');
-            container.innerHTML = '';
-            
-            const stepData = funnelData[currentStepId] || { ...defaultStepData };
-            const missions = stepData.missions || [];
+        // Render Mission Items + Goals + Subtasks
+        function renderMissions() {
+            const stack = document.getElementById('m-stack');
+            stack.innerHTML = '';
+
+            const missions = funnelData[currentStepId]?.missions || [];
 
             if (missions.length === 0) {
-                container.innerHTML = `
-                    <div class="text-xs text-slate-500 text-center py-6">
-                        우측 상단의 '+ 추가' 버튼을 눌러 미션을 작성하세요.
+                stack.innerHTML = `
+                    <div class="text-xs text-slate-500 text-center py-8">
+                        등록된 단계별 미션이 전혀 없습니다. 우측 상단 '+ 미션 등록' 버튼을 누르세요.
                     </div>
                 `;
                 return;
             }
 
-            missions.forEach((mission, index) => {
-                const isChecked = mission.completed;
-                const missionHTML = `
-                    <div class="flex items-center justify-between gap-2 p-2 bg-slate-950 rounded-lg border border-slate-800 hover:border-slate-700 transition group">
-                        <label class="flex items-center gap-2.5 flex-1 cursor-pointer select-none">
-                            <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleMission(${index})" class="rounded text-brand-600 bg-slate-900 border-slate-700 focus:ring-0 focus:ring-offset-0 w-4 h-4">
-                            <span class="text-xs text-slate-300 ${isChecked ? 'line-through opacity-50' : ''}">${mission.text}</span>
-                        </label>
-                        <button onclick="deleteMission(${index})" class="opacity-0 group-hover:opacity-100 text-slate-500 hover:text-rose-400 p-0.5 transition duration-150" title="삭제">
-                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                        </button>
+            missions.forEach((m, idx) => {
+                const subtaskHTML = m.subtasks 
+                    ? `<div class="mt-3 p-2.5 bg-slate-950 rounded border border-slate-800 text-xs text-slate-300">
+                           <span class="block text-[10px] font-bold text-brand-400 mb-1 uppercase tracking-wider">세부 업무 내용</span>
+                           <p class="leading-relaxed">${m.subtasks}</p>
+                       </div>`
+                    : '';
+
+                const goalHTML = m.goal 
+                    ? `<div class="mt-1.5 text-xs text-slate-400 flex items-start gap-1.5">
+                           <span class="text-emerald-500 shrink-0">[수행 목적]</span>
+                           <span>${m.goal}</span>
+                       </div>`
+                    : '';
+
+                const card = `
+                    <div class="p-4 bg-slate-950 border border-slate-800 rounded-lg hover:border-slate-700 transition group relative">
+                        <div class="flex items-start justify-between gap-4">
+                            <div class="flex-1">
+                                <h4 class="font-bold text-sm text-white flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-brand-500"></span>
+                                    ${m.text}
+                                </h4>
+                                ${goalHTML}
+                                ${subtaskHTML}
+                            </div>
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                <button onclick="editMission(${idx})" class="p-1.5 text-slate-400 hover:text-brand-300 transition" title="수정">
+                                    <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                </button>
+                                <button onclick="deleteMission(${idx})" class="p-1.5 text-slate-400 hover:text-rose-400 transition" title="삭제">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 `;
-                container.insertAdjacentHTML('beforeend', missionHTML);
+                stack.insertAdjacentHTML('beforeend', card);
             });
             lucide.createIcons();
         }
 
-        // Toggle checkbox state
-        function toggleMission(index) {
-            funnelData[currentStepId].missions[index].completed = !funnelData[currentStepId].missions[index].completed;
-            saveAllDataSilently();
-            renderTabs(); // Progress bar updates
-            renderStepContent();
+        // Render currently in-progress checkbox tracker stack
+        function renderProgressTrackerList() {
+            const container = document.getElementById('progress-checkbox-list');
+            container.innerHTML = '';
+
+            const missions = funnelData[currentStepId]?.missions || [];
+
+            if (missions.length === 0) {
+                container.innerHTML = `
+                    <div class="text-xs text-slate-500 text-center py-4">
+                        등록된 업무 미션이 없어서 표시할 진행 내용이 존재하지 않습니다.
+                    </div>
+                `;
+                return;
+            }
+
+            missions.forEach((m, idx) => {
+                const isChecked = m.completed;
+                const checkItem = `
+                    <div class="flex items-center justify-between p-2.5 bg-slate-950 rounded-lg border border-slate-800 hover:border-slate-700 transition">
+                        <label class="flex items-center gap-3 flex-1 cursor-pointer select-none">
+                            <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleMissionCompleted(${idx})" class="rounded text-brand-600 bg-slate-900 border-slate-800 focus:ring-0 w-4.5 h-4.5 transition cursor-pointer">
+                            <div class="text-xs">
+                                <span class="font-medium text-slate-200 block ${isChecked ? 'line-through opacity-50' : ''}">${m.text}</span>
+                                <span class="text-[10px] text-slate-400 truncate max-w-sm block">${m.subtasks || "세부 업무 없음"}</span>
+                            </div>
+                        </label>
+                        <div>
+                            ${isChecked 
+                                ? `<span class="text-[10px] px-2 py-0.5 bg-emerald-950 text-emerald-400 border border-emerald-500/20 rounded font-semibold">완료됨</span>`
+                                : `<span class="text-[10px] px-2 py-0.5 bg-sky-950 text-sky-400 border border-sky-500/20 rounded font-semibold">진행중</span>`
+                            }
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', checkItem);
+            });
         }
 
-        // Add new item to current step's checklist
-        function addNewMission() {
-            const text = prompt("새로운 미션을 입력해주세요:");
-            if (text && text.trim() !== "") {
+        // Toggle state change completed notification trigger
+        function toggleMissionCompleted(idx) {
+            const isNowCompleted = !funnelData[currentStepId].missions[idx].completed;
+            funnelData[currentStepId].missions[idx].completed = isNowCompleted;
+            
+            saveAllDataSilently();
+            renderTabs();
+            renderStepContent();
+
+            if (isNowCompleted) {
+                triggerToastAlert(`"${funnelData[currentStepId].missions[idx].text}" 미션이 최종 완료되었습니다! 🎉`);
+            }
+        }
+
+        // Show live alert notification card
+        function triggerToastAlert(msg) {
+            const box = document.getElementById('toast-notif-box');
+            const msgContainer = document.getElementById('toast-notif-msg');
+
+            msgContainer.textContent = msg;
+            box.classList.remove('hidden');
+
+            setTimeout(() => {
+                box.classList.add('hidden');
+            }, 3500);
+        }
+
+        // Modal Logic
+        function openNewMissionModal() {
+            document.getElementById('modal-title').textContent = "단계별 신규 미션 수립";
+            document.getElementById('modal-edit-index').value = "-1";
+            document.getElementById('modal-mission-text').value = "";
+            document.getElementById('modal-mission-goal').value = "";
+            document.getElementById('modal-mission-subtasks').value = "";
+            
+            document.getElementById('mission-modal').classList.remove('hidden');
+        }
+
+        function editMission(idx) {
+            const m = funnelData[currentStepId].missions[idx];
+            document.getElementById('modal-title').textContent = "기존 업무 미션 수정";
+            document.getElementById('modal-edit-index').value = idx;
+            document.getElementById('modal-mission-text').value = m.text || "";
+            document.getElementById('modal-mission-goal').value = m.goal || "";
+            document.getElementById('modal-mission-subtasks').value = m.subtasks || "";
+
+            document.getElementById('mission-modal').classList.remove('hidden');
+        }
+
+        function closeMissionModal() {
+            document.getElementById('mission-modal').classList.add('hidden');
+        }
+
+        function submitMissionModal() {
+            const idx = parseInt(document.getElementById('modal-edit-index').value);
+            const text = document.getElementById('modal-mission-text').value.trim();
+            const goal = document.getElementById('modal-mission-goal').value.trim();
+            const subtasks = document.getElementById('modal-mission-subtasks').value.trim();
+
+            if (!text) {
+                alert("미션명을 올바르게 입력해주세요.");
+                return;
+            }
+
+            const mObj = {
+                text: text,
+                goal: goal,
+                subtasks: subtasks,
+                completed: idx !== -1 ? funnelData[currentStepId].missions[idx].completed : false
+            };
+
+            if (idx === -1) {
+                // Add new
                 if (!funnelData[currentStepId].missions) {
                     funnelData[currentStepId].missions = [];
                 }
-                funnelData[currentStepId].missions.push({ text: text.trim(), completed: false });
+                funnelData[currentStepId].missions.push(mObj);
+            } else {
+                // Update
+                funnelData[currentStepId].missions[idx] = mObj;
+            }
+
+            saveAllDataSilently();
+            renderTabs();
+            renderStepContent();
+            closeMissionModal();
+        }
+
+        function deleteMission(idx) {
+            if (confirm("이 미션과 연결된 세부 업무/진행도가 대시보드에서 완전히 영구 삭제됩니다. 삭제하시겠습니까?")) {
+                funnelData[currentStepId].missions.splice(idx, 1);
                 saveAllDataSilently();
                 renderTabs();
                 renderStepContent();
             }
         }
 
-        // Delete mission from checklist
-        function deleteMission(index) {
-            if (confirm("이 미션을 리스트에서 정말 삭제하시겠습니까?")) {
-                funnelData[currentStepId].missions.splice(index, 1);
-                saveAllDataSilently();
-                renderTabs();
-                renderStepContent();
-            }
-        }
-
-        // Render Quick Notes List
+        // Quick Notes Functions
         function renderQuickNotes() {
             const container = document.getElementById('quick-notes-list');
             container.innerHTML = '';
@@ -500,7 +771,6 @@
             lucide.createIcons();
         }
 
-        // Add Quick Note
         function addQuickNote() {
             const input = document.getElementById('note-input');
             const noteText = input.value.trim();
@@ -512,35 +782,30 @@
             }
         }
 
-        // Handle Enter key for quick notes
         function handleNoteKeypress(event) {
             if (event.key === 'Enter') {
                 addQuickNote();
             }
         }
 
-        // Delete Quick Note
         function deleteQuickNote(index) {
             quickNotes.splice(index, 1);
             saveAllDataSilently();
             renderQuickNotes();
         }
 
-        // Save to localStorage quietly
         function saveAllDataSilently() {
-            localStorage.setItem('funnelData', JSON.stringify(funnelData));
-            localStorage.setItem('quickNotes', JSON.stringify(quickNotes));
+            localStorage.setItem('funnelData_v2', JSON.stringify(funnelData));
+            localStorage.setItem('quickNotes_v2', JSON.stringify(quickNotes));
         }
 
-        // Save button interaction
         function saveAllData() {
             saveAllDataSilently();
-            alert("전체 데이터가 현재 브라우저의 캐시(로컬 스토리지)에 성공적으로 저장되었습니다!");
+            alert("전체 데이터의 로컬 스토리지 강제 백업 저장이 성공적으로 완료되었습니다!");
         }
 
-        // Clean slate reset
         function resetData() {
-            if (confirm("정말로 전체 데이터를 지우고 디폴트 상태로 초기화하시겠습니까?\n입력된 모든 회의록과 미션 정보가 삭제됩니다.")) {
+            if (confirm("대시보드 내의 모든 기획 텍스트 정보와 미션 진행 데이터가 완전 초기화됩니다. 리셋하시겠습니까?")) {
                 localStorage.clear();
                 funnelData = {};
                 quickNotes = [];
@@ -549,7 +814,6 @@
             }
         }
 
-        // Export data as a JSON file
         function exportData() {
             const dataStr = JSON.stringify({
                 funnelData: funnelData,
@@ -557,7 +821,7 @@
             }, null, 4);
             const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
             
-            const exportFileDefaultName = '중개마케팅_강의퍼널_대시보드_데이터.json';
+            const exportFileDefaultName = '중개마케팅_강의퍼널_대시보드_V2_백업.json';
             
             const linkElement = document.createElement('a');
             linkElement.setAttribute('href', dataUri);
@@ -565,7 +829,6 @@
             linkElement.click();
         }
 
-        // Import data from custom JSON file
         function importData(event) {
             const input = event.target;
             const reader = new FileReader();
@@ -578,12 +841,12 @@
                         quickNotes = parsed.quickNotes || [];
                         saveAllDataSilently();
                         initApp();
-                        alert("데이터 파일을 완벽하게 불러왔습니다!");
+                        alert("백업 파일에서 전체 데이터 복구를 마쳤습니다!");
                     } else {
-                        alert("올바르지 않은 파일 형식입니다.");
+                        alert("유효하지 않은 구조 파일입니다.");
                     }
                 } catch (e) {
-                    alert("파일 분석 중 오류가 발생했습니다: " + e.message);
+                    alert("파일 파싱 실패: " + e.message);
                 }
             };
             
@@ -592,7 +855,6 @@
             }
         }
 
-        // Run app init
         window.onload = initApp;
     </script>
 </body>
