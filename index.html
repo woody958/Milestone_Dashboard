@@ -229,12 +229,18 @@
 
             <!-- ③ 현재 진행중인 사항 -->
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-                <div class="mb-4">
-                    <h3 class="font-semibold text-white flex items-center gap-2 text-base">
-                        <i data-lucide="activity" class="w-5 h-5 text-sky-400"></i>
-                        ③ 현재 진행중인 사항 및 실시간 체크
-                    </h3>
-                    <p class="text-xs text-slate-400 mt-1">실행 중인 미션을 체크하여 진행도를 모니터링합니다.</p>
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <h3 class="font-semibold text-white flex items-center gap-2 text-base">
+                            <i data-lucide="activity" class="w-5 h-5 text-sky-400"></i>
+                            ③ 현재 진행중인 사항 및 실시간 체크
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-1">미션을 클릭하여 세부 업무 체크리스트를 펼쳐보세요.</p>
+                    </div>
+                    <div class="text-right shrink-0 ml-4">
+                        <div id="progress-pct" class="text-2xl font-bold text-sky-400 leading-none">0%</div>
+                        <div id="progress-fraction" class="text-xs text-slate-400 mt-1">0/0</div>
+                    </div>
                 </div>
                 <div id="progress-checkbox-list" class="space-y-3"></div>
             </div>
@@ -397,9 +403,10 @@ const funnelSteps = [
     { id:'step5', name:'유료 강의 운영' }
 ];
 
-let currentStepId = 'step1';
-let funnelData    = {};
-let quickNotes    = [];
+let currentStepId    = 'step1';
+let funnelData       = {};
+let quickNotes       = [];
+let expandedMissions = new Set();
 
 const initialDataSet = {
     step1: { kpis:[], shortTermItems:[], longTermItems:[],
@@ -428,6 +435,16 @@ function migrateStepData(d) {
     if (!Array.isArray(d.shortTermItems)) { d.shortTermItems = (typeof d.shortTerm === 'string' && d.shortTerm.trim()) ? [{ text:d.shortTerm.trim() }] : []; delete d.shortTerm; }
     if (!Array.isArray(d.longTermItems))  { d.longTermItems  = (typeof d.longTerm  === 'string' && d.longTerm.trim())  ? [{ text:d.longTerm.trim()  }] : []; delete d.longTerm; }
     if (!Array.isArray(d.missions)) d.missions = [];
+    d.missions = d.missions.map(m => {
+        if (!Array.isArray(m.subtaskChecks)) {
+            const subtasks = parseSubtasks(m.subtasks);
+            m.subtaskChecks = new Array(subtasks.length).fill(false);
+            if (m.completed && subtasks.length > 0) {
+                m.subtaskChecks = new Array(subtasks.length).fill(true);
+            }
+        }
+        return m;
+    });
     return d;
 }
 
@@ -474,6 +491,7 @@ function renderTabs() {
 function switchStep(stepId) {
     currentStepId = stepId;
     localStorage.setItem('currentStepId_v2', stepId);
+    expandedMissions.clear();
     renderTabs(); renderStepContent();
     lucide.createIcons();
 }
@@ -625,29 +643,114 @@ function renderMissions() {
 /* ═══════════════════════════════════════════════════════
    ③ 진행 트래커
 ═══════════════════════════════════════════════════════ */
+function parseSubtasks(str) {
+    if (!str) return [];
+    return str.split(/[,\n]+/).map(s => s.trim()).filter(s => s.length > 0);
+}
+
+function getMissionStatus(m) {
+    const subtasks = parseSubtasks(m.subtasks);
+    if (subtasks.length === 0) return m.completed ? 'completed' : 'pending';
+    const checks = m.subtaskChecks || [];
+    const cnt = subtasks.filter((_, i) => !!checks[i]).length;
+    if (cnt === 0) return 'pending';
+    if (cnt === subtasks.length) return 'completed';
+    return 'inprogress';
+}
+
+function updateProgressStats() {
+    const missions = funnelData[currentStepId]?.missions || [];
+    let total = 0, checked = 0;
+    missions.forEach(m => {
+        const subs = parseSubtasks(m.subtasks);
+        if (subs.length > 0) {
+            total += subs.length;
+            const chk = m.subtaskChecks || [];
+            checked += subs.filter((_, i) => !!chk[i]).length;
+        } else {
+            total += 1;
+            if (m.completed) checked += 1;
+        }
+    });
+    const pct = total > 0 ? Math.round(checked / total * 100) : 0;
+    const pe = document.getElementById('progress-pct');
+    const fe = document.getElementById('progress-fraction');
+    if (pe) pe.textContent = pct + '%';
+    if (fe) fe.textContent = checked + '/' + total;
+}
+
 function renderProgressTrackerList() {
     const container = document.getElementById('progress-checkbox-list');
     const missions  = funnelData[currentStepId]?.missions || [];
     if (missions.length === 0) {
         container.innerHTML = `<div class="text-xs text-slate-500 text-center py-4">등록된 미션이 없습니다.</div>`;
+        updateProgressStats();
         return;
     }
     container.innerHTML = '';
     missions.forEach((m, idx) => {
+        const subtasks   = parseSubtasks(m.subtasks);
+        const checks     = m.subtaskChecks || [];
+        const status     = getMissionStatus(m);
+        const isExp      = expandedMissions.has(idx);
+        const hasSubs    = subtasks.length > 0;
+        const statusBadge = {
+            pending:    `<span class="text-[10px] px-2 py-0.5 bg-slate-800 text-slate-400 border border-slate-600/30 rounded font-semibold whitespace-nowrap">진행 전</span>`,
+            inprogress: `<span class="text-[10px] px-2 py-0.5 bg-sky-950 text-sky-400 border border-sky-500/20 rounded font-semibold whitespace-nowrap">진행 중</span>`,
+            completed:  `<span class="text-[10px] px-2 py-0.5 bg-emerald-950 text-emerald-400 border border-emerald-500/20 rounded font-semibold whitespace-nowrap">진행 완료</span>`
+        }[status];
+        const chevron = hasSubs
+            ? `<i data-lucide="${isExp ? 'chevron-down' : 'chevron-right'}" class="w-4 h-4 text-slate-400 flex-shrink-0"></i>`
+            : `<span class="w-4 h-4 flex-shrink-0 inline-block"></span>`;
+        let subsHtml = '';
+        if (hasSubs && isExp) {
+            const rows = subtasks.map((st, si) => `
+                <label class="flex items-center gap-2.5 px-3 py-1.5 rounded-lg hover:bg-slate-800/50 cursor-pointer select-none group transition">
+                    <input type="checkbox" ${checks[si] ? 'checked' : ''}
+                        onchange="toggleSubtaskCheck(${idx},${si})"
+                        class="w-3.5 h-3.5 rounded text-sky-500 bg-slate-900 border-slate-600 focus:ring-0 cursor-pointer flex-shrink-0">
+                    <span class="text-xs text-slate-300 group-hover:text-white transition ${checks[si] ? 'line-through opacity-40' : ''}">${esc(st)}</span>
+                </label>`).join('');
+            subsHtml = `<div class="ml-6 mb-2 border-l-2 border-slate-700/60 pl-1 space-y-0.5">${rows}</div>`;
+        }
+        const hdrClick  = hasSubs ? `onclick="toggleProgressMission(${idx})"` : '';
+        const hdrCursor = hasSubs ? 'cursor-pointer hover:bg-slate-900/50' : '';
         container.insertAdjacentHTML('beforeend', `
-            <div class="flex items-center justify-between p-2.5 bg-slate-950 rounded-lg border border-slate-800 hover:border-slate-700 transition">
-                <label class="flex items-center gap-3 flex-1 cursor-pointer select-none">
-                    <input type="checkbox" ${m.completed?'checked':''} onchange="toggleMissionCompleted(${idx})" class="rounded text-brand-600 bg-slate-900 border-slate-800 focus:ring-0 transition cursor-pointer">
-                    <div class="text-xs">
-                        <span class="font-medium text-slate-200 block ${m.completed?'line-through opacity-50':''}">${esc(m.text)}</span>
-                        <span class="text-[10px] text-slate-400 truncate max-w-sm block">${esc(m.subtasks)||'세부 업무 없음'}</span>
+            <div class="bg-slate-950 rounded-lg border border-slate-800 hover:border-slate-700 transition overflow-hidden">
+                <div class="flex items-center justify-between p-2.5 gap-2 rounded-lg ${hdrCursor}" ${hdrClick}>
+                    <div class="flex items-center gap-2 flex-1 min-w-0">
+                        ${chevron}
+                        <span class="text-xs font-medium text-slate-200 ${status === 'completed' ? 'line-through opacity-50' : ''}">${esc(m.text)}</span>
                     </div>
-                </label>
-                ${m.completed
-                    ? `<span class="text-[10px] px-2 py-0.5 bg-emerald-950 text-emerald-400 border border-emerald-500/20 rounded font-semibold">완료됨</span>`
-                    : `<span class="text-[10px] px-2 py-0.5 bg-sky-950 text-sky-400 border border-sky-500/20 rounded font-semibold">진행중</span>`}
+                    ${statusBadge}
+                </div>
+                ${subsHtml}
             </div>`);
     });
+    updateProgressStats();
+    lucide.createIcons();
+}
+
+function toggleProgressMission(idx) {
+    if (expandedMissions.has(idx)) expandedMissions.delete(idx);
+    else expandedMissions.add(idx);
+    renderProgressTrackerList();
+}
+
+function toggleSubtaskCheck(missionIdx, subtaskIdx) {
+    const m = funnelData[currentStepId].missions[missionIdx];
+    const subs = parseSubtasks(m.subtasks);
+    if (!Array.isArray(m.subtaskChecks) || m.subtaskChecks.length !== subs.length) {
+        m.subtaskChecks = new Array(subs.length).fill(false);
+    }
+    m.subtaskChecks[subtaskIdx] = !m.subtaskChecks[subtaskIdx];
+    const allDone = subs.length > 0 && subs.every((_, i) => m.subtaskChecks[i]);
+    m.completed = allDone;
+    saveAllDataSilently();
+    renderTabs();
+    renderProgressTrackerList();
+    if (allDone) triggerToastAlert(`"${m.text}" 미션의 모든 세부 업무가 완료되었습니다! 🎉`);
+    lucide.createIcons();
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -919,13 +1022,23 @@ function editMission(idx) {
 }
 function closeMissionModal() { document.getElementById('mission-modal').classList.add('hidden'); }
 function submitMissionModal() {
-    const idx  = parseInt(document.getElementById('modal-edit-index').value);
-    const text = document.getElementById('modal-mission-text').value.trim();
+    const idx          = parseInt(document.getElementById('modal-edit-index').value);
+    const text         = document.getElementById('modal-mission-text').value.trim();
     if (!text) { alert("미션명을 입력해주세요."); return; }
+    const subtasksText = document.getElementById('modal-mission-subtasks').value.trim();
+    const newSubs      = parseSubtasks(subtasksText);
+    const oldM         = idx !== -1 ? funnelData[currentStepId].missions[idx] : null;
+    let subtaskChecks  = new Array(newSubs.length).fill(false);
+    if (oldM && Array.isArray(oldM.subtaskChecks)) {
+        const oldSubs = parseSubtasks(oldM.subtasks || '');
+        if (oldSubs.length === newSubs.length) subtaskChecks = [...oldM.subtaskChecks];
+    }
     const obj = {
-        text, goal: document.getElementById('modal-mission-goal').value.trim(),
-        subtasks: document.getElementById('modal-mission-subtasks').value.trim(),
-        completed: idx !== -1 ? funnelData[currentStepId].missions[idx].completed : false
+        text,
+        goal:          document.getElementById('modal-mission-goal').value.trim(),
+        subtasks:      subtasksText,
+        completed:     oldM ? oldM.completed : false,
+        subtaskChecks
     };
     if (idx === -1) { if (!funnelData[currentStepId].missions) funnelData[currentStepId].missions = []; funnelData[currentStepId].missions.push(obj); }
     else funnelData[currentStepId].missions[idx] = obj;
