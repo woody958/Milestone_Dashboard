@@ -1,0 +1,202 @@
+{
+  "_meta": {
+    "generatedAt": "2026-07-23T02:00:20.504Z",
+    "sourceFiles": [
+      "2026-07-23.md"
+    ],
+    "stats": {
+      "kpiUpdates": 3,
+      "actionItems": 3,
+      "keyDecisions": 3,
+      "shortTermItems": 4,
+      "longTermItems": 4
+    }
+  },
+  "dashboardData": {
+    "step2": {
+      "kpis": [
+        {
+          "metricName": "무료 특강 사전 신청자 수",
+          "target": "1000",
+          "current": "472"
+        }
+      ],
+      "missions": [
+        {
+          "text": "[박재용] 카드뉴스 2종 제작 및 SNS 배포",
+          "goal": "무료 강의 신청 전환율 향상",
+          "subtasks": "마감: 2026-07-30",
+          "completed": false,
+          "subtaskChecks": [
+            false
+          ]
+        }
+      ],
+      "shortTermItems": [],
+      "longTermItems": []
+    },
+    "step3": {
+      "kpis": [
+        {
+          "metricName": "카카오 단톡방 참여 인원",
+          "target": "500",
+          "current": "215"
+        }
+      ],
+      "missions": [
+        {
+          "text": "[김마케팅] 단톡방 웰컴 메시지 시나리오 개선",
+          "goal": "신규 유입 이탈율 30% 감소",
+          "subtasks": "마감: 2026-07-27",
+          "completed": false,
+          "subtaskChecks": [
+            false
+          ]
+        }
+      ],
+      "shortTermItems": [],
+      "longTermItems": []
+    },
+    "step4": {
+      "kpis": [
+        {
+          "metricName": "실시간 특강 줌 참석률",
+          "target": "300",
+          "current": "89"
+        }
+      ],
+      "missions": [
+        {
+          "text": "[이콘텐츠] 줌 리허설 및 장비 최종 점검",
+          "goal": "라이브 방송 품질 확보",
+          "subtasks": "마감: 2026-07-25",
+          "completed": true,
+          "subtaskChecks": [
+            true
+          ]
+        }
+      ],
+      "shortTermItems": [],
+      "longTermItems": []
+    },
+    "_keyDecisions": [
+      "[2026-07-23 결정] 무료 강의 빈도를 월 2회에서 격주 1회로 조정하여 준비 퀄리티를 우선 향상",
+      "[2026-07-23 결정] 유튜브 쇼츠 채널 개설을 이번 분기 내 공식 추진 확정",
+      "[2026-07-23 결정] 단톡방 자동 웰컴 메시지를 카카오 비즈니스 API로 전환하는 방안 적극 검토"
+    ],
+    "step1": {
+      "kpis": [],
+      "missions": [],
+      "shortTermItems": [
+        {
+          "text": "홍보 소재 부족, 이번 주 내로 카드뉴스 2개 추가 제작 필요"
+        },
+        {
+          "text": "단톡방 업데이트 빈도 즉시 개선 필요 (주 1회 → 주 3회)"
+        },
+        {
+          "text": "당장 신청 폼 모바일 최적화 개선 작업 진행 필요"
+        },
+        {
+          "text": "줌 참석률 낮은 이유 파악을 위해 신청자 대상 빠른 설문 진행"
+        }
+      ],
+      "longTermItems": [
+        {
+          "text": "장기적으로 유튜브 채널 인바운드 마케팅 체계 구축 고려"
+        },
+        {
+          "text": "향후 수강생 성과 사례집 제작을 통한 바이럴 마케팅 채널 확보"
+        },
+        {
+          "text": "중장기적으로 외국인 관광객 대상 B2B 플랫폼과의 연동 검토"
+        },
+        {
+          "text": "지속적으로 외국인 인플루언서 풀 확대 및 섭외 자동화 시스템 개발 필요"
+        }
+      ]
+    }
+  },
+  "latestMeeting": {
+    "date": "2026-07-23",
+    "kpiUpdates": [
+      {
+        "metricName": "무료 특강 사전 신청자 수",
+        "target": "1000",
+        "current": "472",
+        "stepId": "step2"
+      },
+      {
+        "metricName": "카카오 단톡방 참여 인원",
+        "target": "500",
+        "current": "215",
+        "stepId": "step3"
+      },
+      {
+        "metricName": "실시간 특강 줌 참석률",
+        "target": "300",
+        "current": "89",
+        "stepId": "step4"
+      }
+    ],
+    "actionItems": [
+      {
+        "assignee": "박재용",
+        "text": "카드뉴스 2종 제작 및 SNS 배포",
+        "goal": "무료 강의 신청 전환율 향상",
+        "deadline": "2026-07-30",
+        "completed": false,
+        "stepId": "step2"
+      },
+      {
+        "assignee": "김마케팅",
+        "text": "단톡방 웰컴 메시지 시나리오 개선",
+        "goal": "신규 유입 이탈율 30% 감소",
+        "deadline": "2026-07-27",
+        "completed": false,
+        "stepId": "step3"
+      },
+      {
+        "assignee": "이콘텐츠",
+        "text": "줌 리허설 및 장비 최종 점검",
+        "goal": "라이브 방송 품질 확보",
+        "deadline": "2026-07-25",
+        "completed": true,
+        "stepId": "step4"
+      }
+    ],
+    "keyDecisions": [
+      "무료 강의 빈도를 월 2회에서 격주 1회로 조정하여 준비 퀄리티를 우선 향상",
+      "유튜브 쇼츠 채널 개설을 이번 분기 내 공식 추진 확정",
+      "단톡방 자동 웰컴 메시지를 카카오 비즈니스 API로 전환하는 방안 적극 검토"
+    ],
+    "shortTermItems": [
+      {
+        "text": "홍보 소재 부족, 이번 주 내로 카드뉴스 2개 추가 제작 필요"
+      },
+      {
+        "text": "단톡방 업데이트 빈도 즉시 개선 필요 (주 1회 → 주 3회)"
+      },
+      {
+        "text": "당장 신청 폼 모바일 최적화 개선 작업 진행 필요"
+      },
+      {
+        "text": "줌 참석률 낮은 이유 파악을 위해 신청자 대상 빠른 설문 진행"
+      }
+    ],
+    "longTermItems": [
+      {
+        "text": "장기적으로 유튜브 채널 인바운드 마케팅 체계 구축 고려"
+      },
+      {
+        "text": "향후 수강생 성과 사례집 제작을 통한 바이럴 마케팅 채널 확보"
+      },
+      {
+        "text": "중장기적으로 외국인 관광객 대상 B2B 플랫폼과의 연동 검토"
+      },
+      {
+        "text": "지속적으로 외국인 인플루언서 풀 확대 및 섭외 자동화 시스템 개발 필요"
+      }
+    ]
+  }
+}
